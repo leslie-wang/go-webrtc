@@ -10,7 +10,6 @@
 #include <future>
 
 #include "webrtc/api/test/fakeconstraints.h"
-#include "webrtc/api/test/fakeaudiocapturemodule.h"
 #include "webrtc/api/jsepsessiondescription.h"
 #include "webrtc/api/webrtcsdp.h"
 
@@ -56,11 +55,10 @@ class Peer
     signalling_thread_->Start();  // Must start before being passed to
     worker_thread_->Start();      // PeerConnectionFactory.
 
-    this->fake_audio_ = FakeAudioCaptureModule::Create();
     pc_factory = CreatePeerConnectionFactory(
       worker_thread_,
       signalling_thread_,
-      this->fake_audio_, NULL, NULL);
+      NULL, NULL, NULL);
     if (!pc_factory.get()) {
       CGO_DBG("Could not create PeerConnectionFactory");
       return false;
@@ -191,7 +189,6 @@ class Peer
  private:
   rtc::Thread *signalling_thread_;
   rtc::Thread *worker_thread_;
-  rtc::scoped_refptr<AudioDeviceModule> fake_audio_;
 };  // class Peer
 
 // Keep track of Peers in global scope to prevent deallocation, due to the
